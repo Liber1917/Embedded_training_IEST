@@ -1,150 +1,70 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include "delay.h"
 #include "air32f10x.h"
 
-#define PRINTF_LOG 	printf
+// 一个工程里只能有一个main.c文件，一个main函数。
+// 下面列举各种延时点灯方式以供参考
+#include "air32f10x_rcc.h" // RCC（Reset and Clock Control）外设
+#include "delay.h"
+// 需要了解GPIO相关知识，板载灯分别对应PB11，PB10，PB2
+#include "air32f10x_gpio.h"
 
-USART_TypeDef* USART_TEST = USART1;
+// 延时点灯：宏定义寄存器版
+// 这种方式更加简洁和省时，但是不易读
+#define LED_OFF  GPIOB -> BRR = GPIO_Pin_11
+#define LED_ON  GPIOB -> BSRR = GPIO_Pin_11
+#define LED_TOGGLE GPIOB -> ODR ^= GPIO_Pin_11 // ODR为输出状态寄存器，异或即可翻转
 
-void UART_Configuration(uint32_t bound);
-void DMA_RecvConfiguration(void);
-void DMA_SendConfiguration(void);
-#define BUFFSIZE 	8
-uint8_t Buff[BUFFSIZE];
+// 延时点灯：函数版
+int main()
+{
+	// 配置GPIO, 使能GPIOB时钟，两种方法都绕不开的步骤
+	// 函数方法更易上手
+	configure_GPIO();
+	// 通过PB11控制板载灯
+	GPIO_SetBits(GPIOB,GPIO_Pin_11); // 点亮PB11
+	// 延时2s
+	Delay_Init(); // 初始化延时函数
+	Delay_S(2);
 
-int main(void)
-{	
-	uint32_t i;
-	RCC_ClocksTypeDef clocks;
-	
-	Delay_Init();
-	UART_Configuration(115200);
-	RCC_GetClocksFreq(&clocks);
-	
-	PRINTF_LOG("\n");
-	PRINTF_LOG("SYSCLK: %3.1fMhz, HCLK: %3.1fMhz, PCLK1: %3.1fMhz, PCLK2: %3.1fMhz, ADCCLK: %3.1fMhz\n", \
-	(float)clocks.SYSCLK_Frequency/1000000, (float)clocks.HCLK_Frequency/1000000, \
-	(float)clocks.PCLK1_Frequency/1000000, (float)clocks.PCLK2_Frequency / 1000000, (float)clocks.ADCCLK_Frequency / 1000000);
-	
-	PRINTF_LOG("AIR32F103 USART Asyn DMA Test.\n");
-	
-	while(1)
+	GPIO_ResetBits(GPIOB,GPIO_Pin_11);
+
+	// 下面把延时和点灯组合起来放入循环
+	for(;;)
 	{
-		DMA_Cmd(DMA1_Channel4, DISABLE); 
-		USART_DMACmd(USART1,USART_DMAReq_Rx,ENABLE);
-		DMA_RecvConfiguration();
-		while(DMA_GetFlagStatus(DMA1_FLAG_TC5) == RESET);
-		PRINTF_LOG("USART Asyn DMA Recv Complete\n");
-		for(i = 0 ; i < BUFFSIZE; i++)
-		{
-			PRINTF_LOG("%c  ,",Buff[i]);
-		}
-		
-		
-		DMA_Cmd(DMA1_Channel5, DISABLE); 
-		USART_DMACmd(USART1,USART_DMAReq_Tx,ENABLE);
-		DMA_SendConfiguration();
-		while(DMA_GetFlagStatus(DMA1_FLAG_TC4) == RESET);
-		PRINTF_LOG("USART Asyn DMA Send Complete\n");
+		GPIO_SetBits(GPIOB,GPIO_Pin_11);
+		// LED_ON;
+		Delay_S(1);
+		// GPIO_ResetBits(GPIOB,GPIO_Pin_11);
+		LED_OFF;
+		Delay_S(1);
 	}
+
 }
 
-
-
-void UART_Configuration(uint32_t bound)
+// 写一个配置GPIO的函数，免得挤在main中
+// C系的函数位置没有讲究，放在main前面或后面都可以
+void configure_GPIO(void)
 {
+	// 首先，声明一个GPIO_InitTypeDef结构体变量
 	GPIO_InitTypeDef GPIO_InitStructure;
-	USART_InitTypeDef USART_InitStructure;
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1,ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
+	// 使用GPIO_StructInit函数初始化结构体，设置默认值用于防止意外
+    GPIO_StructInit(&GPIO_InitStructure);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9; 
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;	
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	// 指定要配置的GPIO引脚
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	// 指定GPIO引脚的速度
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; // 选择一个速度，例如50MHz，这个项目中随便选(参见air32f10x_gpio.h)
+
+	// 指定GPIO引脚的模式
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; // 选择推挽输出，GPIO模式选择可参考https://durant35.github.io/2017/11/30/TACouses_ES2017_MCU_GPIO/
 	
-	USART_InitStructure.USART_BaudRate = bound;
-	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-	USART_InitStructure.USART_StopBits = USART_StopBits_1;
-	USART_InitStructure.USART_Parity = USART_Parity_No;
-	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+	// 现在，我们已经配置好了GPIO_InitStructure结构体
+    // 接下来，我们需要使能GPIOB的时钟（如果是第一次使用GPIOB），先使能时钟才能使用GPIO
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
-	USART_Init(USART_TEST, &USART_InitStructure);
-	USART_Cmd(USART_TEST, ENABLE);
+	// 应用配置
+	GPIO_Init(GPIOB, &GPIO_InitStructure); // PB11，故第一个位置填GPIOB，后一个位置填上面的GPIO_InitStructure地址
 }
 
-void DMA_RecvConfiguration(void)
-{
-	DMA_InitTypeDef DMA_InitStructure;
-	
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE); 
-	
-	//USART1_RX DMA Config
-	DMA_DeInit(DMA1_Channel5); 
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t )&USART1->DR; 
-	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t )Buff; 
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC; 
-	DMA_InitStructure.DMA_BufferSize = BUFFSIZE; 
-	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable; 
-	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable; 
-	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte; 
-	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte; 
-	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal; 
-	DMA_InitStructure.DMA_Priority = DMA_Priority_Medium; 
-	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable; 
-	DMA_Init(DMA1_Channel5, &DMA_InitStructure); 
-	
-	DMA_Cmd(DMA1_Channel5, ENABLE); 
-}
-
-void DMA_SendConfiguration(void)
-{
-	DMA_InitTypeDef DMA_InitStructure;
-	
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE); 
-	
-	//USART1_TX DMA Config
-	DMA_DeInit(DMA1_Channel4); 
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t )&USART1->DR; 
-	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t )Buff; 
-	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST; 
-	DMA_InitStructure.DMA_BufferSize = BUFFSIZE; 
-	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable; 
-	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable; 
-	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte; 
-	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte; 
-	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal; 
-	DMA_InitStructure.DMA_Priority = DMA_Priority_Medium; 
-	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable; 
-	DMA_Init(DMA1_Channel4, &DMA_InitStructure); 
-	
-	DMA_Cmd(DMA1_Channel4, ENABLE); 
-}
-
-int SER_PutChar (int ch)
-{
-	while(!USART_GetFlagStatus(USART_TEST,USART_FLAG_TC));
-	USART_SendData(USART_TEST, (uint8_t) ch);
-
-	return ch;
-}
-
-int fputc(int c, FILE *f)
-{
-	/* Place your implementation of fputc here */
-	/* e.g. write a character to the USART */
-	if (c == '\n')
-	{
-		SER_PutChar('\r');
-	}
-	return (SER_PutChar(c));
-}
 

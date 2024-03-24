@@ -22,19 +22,10 @@
         "name": "FWLib",
         "files": [
           {
-            "path": "Libraries/AIR32F10xLib/src/air32f10x_crc.c"
-          },
-          {
-            "path": "Libraries/AIR32F10xLib/src/air32f10x_dma.c"
-          },
-          {
             "path": "Libraries/AIR32F10xLib/src/air32f10x_gpio.c"
           },
           {
             "path": "Libraries/AIR32F10xLib/src/air32f10x_rcc.c"
-          },
-          {
-            "path": "Libraries/AIR32F10xLib/src/air32f10x_usart.c"
           },
           {
             "path": "Libraries/AIR32F10xLib/src/misc.c"
@@ -58,9 +49,6 @@
             "path": "Libraries/AIR32F10xLib/src/system_air32f10x.c"
           },
           {
-            "path": "USER/air32f10x_it.c"
-          },
-          {
             "path": "USER/main.c"
           }
         ],
@@ -76,7 +64,9 @@
   },
   "targets": {
     "FirstLight_withoutRST": {
-      "excludeList": [],
+      "excludeList": [
+        "<virtual_root>/USER/air32f10x_it.c"
+      ],
       "toolchain": "GCC",
       "compileConfig": {
         "cpuType": "Cortex-M3",
@@ -117,7 +107,6 @@
           "Libraries/AIR32F10xLib/inc",
           "Libraries/CMSIS/Include",
           ".cmsis/include",
-          "USER/RTE/_USART",
           ".eide/deps"
         ],
         "libList": [
