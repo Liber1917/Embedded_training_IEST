@@ -1,0 +1,156 @@
+{
+  "name": "freertos",
+  "type": "ARM",
+  "dependenceList": [],
+  "srcDirs": [
+    ".eide/deps"
+  ],
+  "virtualFolder": {
+    "name": "<virtual_root>",
+    "files": [],
+    "folders": [
+      {
+        "name": "CORE",
+        "files": [
+          {
+            "path": "Libraries/STARTUP/gcc/startup_air32f10x.s"
+          }
+        ],
+        "folders": []
+      },
+      {
+        "name": "freertos",
+        "files": [
+          {
+            "path": "FreeRTOS-Kernel/croutine.c"
+          },
+          {
+            "path": "FreeRTOS-Kernel/event_groups.c"
+          },
+          {
+            "path": "FreeRTOS-Kernel/list.c"
+          },
+          {
+            "path": "FreeRTOS-Kernel/portable/GCC/ARM_CM3/port.c"
+          },
+          {
+            "path": "FreeRTOS-Kernel/portable/MemMang/heap_4.c"
+          },
+          {
+            "path": "FreeRTOS-Kernel/queue.c"
+          },
+          {
+            "path": "FreeRTOS-Kernel/stream_buffer.c"
+          },
+          {
+            "path": "FreeRTOS-Kernel/tasks.c"
+          },
+          {
+            "path": "FreeRTOS-Kernel/timers.c"
+          }
+        ],
+        "folders": []
+      },
+      {
+        "name": "FWLib",
+        "files": [
+          {
+            "path": "Libraries/AIR32F10xLib/src/air32f10x_dma.c"
+          },
+          {
+            "path": "Libraries/AIR32F10xLib/src/air32f10x_gpio.c"
+          },
+          {
+            "path": "Libraries/AIR32F10xLib/src/air32f10x_rcc_ex.c"
+          },
+          {
+            "path": "Libraries/AIR32F10xLib/src/air32f10x_rcc.c"
+          },
+          {
+            "path": "Libraries/AIR32F10xLib/src/air32f10x_spi.c"
+          },
+          {
+            "path": "Libraries/AIR32F10xLib/src/air32f10x_usart.c"
+          },
+          {
+            "path": "Libraries/AIR32F10xLib/src/misc.c"
+          }
+        ],
+        "folders": []
+      },
+      {
+        "name": "USER",
+        "files": [
+          {
+            "path": "main.c"
+          }
+        ],
+        "folders": []
+      }
+    ]
+  },
+  "outDir": "build",
+  "deviceName": null,
+  "packDir": ".pack/Keil/AIR32F103_DFP.1.1.9",
+  "miscInfo": {
+    "uid": "b74a3d6582dde8e3a1a05a79b80c2a95"
+  },
+  "targets": {
+    "freertos": {
+      "excludeList": [],
+      "toolchain": "GCC",
+      "compileConfig": {
+        "cpuType": "Cortex-M3",
+        "floatingPointHardware": "none",
+        "scatterFilePath": "./Libraries/STARTUP/gcc/linker/AIR32F103XB_FLASH.ld",
+        "useCustomScatterFile": true,
+        "storageLayout": {
+          "RAM": [],
+          "ROM": []
+        },
+        "options": "null"
+      },
+      "uploader": "OpenOCD",
+      "uploadConfig": {
+        "bin": "",
+        "target": "stm32f1x",
+        "interface": "cmsis-dap",
+        "baseAddr": "0x08000000"
+      },
+      "uploadConfigMap": {
+        "JLink": {
+          "bin": "",
+          "baseAddr": "",
+          "cpuInfo": {
+            "vendor": "null",
+            "cpuName": "null"
+          },
+          "proType": 1,
+          "speed": 8000,
+          "otherCmds": ""
+        }
+      },
+      "custom_dep": {
+        "name": "default",
+        "incList": [
+          "Libraries/AIR32F10xLib/inc",
+          "Libraries/CMSIS/Include",
+          "FreeRTOS-Kernel/include",
+          ".",
+          "FreeRTOS-Kernel/portable/GCC/ARM_CM3",
+          ".cmsis/include",
+          "RTE/_freertos",
+          ".eide/deps"
+        ],
+        "libList": [
+          "Libraries/AIR32F10xLib/lib/cryptlib"
+        ],
+        "sourceDirList": [],
+        "defineList": [
+          "USE_STDPERIPH_DRIVER"
+        ]
+      }
+    }
+  },
+  "version": "3.3"
+}
