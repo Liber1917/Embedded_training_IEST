@@ -3,7 +3,10 @@
   "type": "ARM",
   "dependenceList": [],
   "srcDirs": [
-    ".eide/deps"
+    ".eide/deps",
+    ".pack/Keil/AIR32F103_DFP.1.1.9",
+    "CMSIS",
+    "STARTUP"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",
@@ -11,7 +14,7 @@
     "folders": []
   },
   "outDir": "build",
-  "deviceName": "STM32F103CB",
+  "deviceName": "AIR32F103CB",
   "packDir": ".pack/Keil/AIR32F103_DFP.1.1.9",
   "miscInfo": {
     "uid": "a37281e830e3ddd2f7e13c7fd256f27e"
@@ -152,38 +155,25 @@
       }
     },
     "EIDE_Air32f1": {
-      "excludeList": [],
-      "toolchain": "AC5",
+      "excludeList": [
+        "STARTUP/arm",
+        "STARTUP/iar",
+        ".pack/Keil/AIR32F103_DFP.1.1.9/Device/Source/ARM",
+        ".pack/Keil/AIR32F103_DFP.1.1.9/Flash",
+        ".pack/Keil/AIR32F103_DFP.1.1.9/RTE_Driver",
+        ".pack/Keil/AIR32F103_DFP.1.1.9/Device/Source",
+        ".pack/Keil/AIR32F103_DFP.1.1.9/SVD",
+        ".pack/Keil/AIR32F103_DFP.1.1.9/Device/Include"
+      ],
+      "toolchain": "GCC",
       "compileConfig": {
         "cpuType": "Cortex-M3",
         "floatingPointHardware": "none",
-        "useCustomScatterFile": false,
-        "scatterFilePath": "<YOUR_SCATTER_FILE>.sct",
+        "scatterFilePath": "STARTUP/gcc/linker/AIR32F103XB_FLASH.ld",
+        "useCustomScatterFile": true,
         "storageLayout": {
-          "RAM": [
-            {
-              "tag": "IRAM",
-              "id": 1,
-              "mem": {
-                "startAddr": "0x20000000",
-                "size": "0x5000"
-              },
-              "isChecked": true,
-              "noInit": false
-            }
-          ],
-          "ROM": [
-            {
-              "tag": "IROM",
-              "id": 1,
-              "mem": {
-                "startAddr": "0x08000000",
-                "size": "0x10000"
-              },
-              "isChecked": true,
-              "isStartup": true
-            }
-          ]
+          "RAM": [],
+          "ROM": []
         },
         "options": "null"
       },
@@ -191,7 +181,7 @@
       "uploadConfig": {
         "bin": "",
         "target": "stm32f1x",
-        "interface": "stlink",
+        "interface": "cmsis-dap",
         "baseAddr": "0x08000000"
       },
       "uploadConfigMap": {
@@ -210,11 +200,16 @@
       "custom_dep": {
         "name": "default",
         "incList": [
-          ".eide/deps"
+          ".eide/deps",
+          "CMSIS/Include",
+          ".pack/Keil/AIR32F103_DFP.1.1.9/Device/StdPeriph_Driver/inc",
+          ".pack/Keil/AIR32F103_DFP.1.1.9/Device/StdPeriph_Driver/templates"
         ],
         "libList": [],
         "sourceDirList": [],
-        "defineList": []
+        "defineList": [
+          "AIR32F10X_MD"
+        ]
       }
     }
   },
