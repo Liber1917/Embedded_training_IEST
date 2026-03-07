@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEST 嵌入式软件培训体系</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+            overflow-x: hidden;
+        }
+
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 170, 255, 0.1) 0%, transparent 40%);
+            animation: bgMove 20s ease-in-out infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-20px, -20px) rotate(5deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 标题 */
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ff88 0%, #00aaff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            font-weight: 300;
+        }
+
+        /* 统计卡片 */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00ff88;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        /* 学习路径 */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #00ff88, #00aaff);
+            border-radius: 2px;
+        }
+
+        .module {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .module:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .module:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .module-card {
+            width: calc(50% - 40px);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(0, 255, 136, 0.4);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .module-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .module:nth-child(1) .module-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .module:nth-child(2) .module-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .module:nth-child(3) .module-icon { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .module:nth-child(4) .module-icon { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .module:nth-child(5) .module-icon { background: linear-gradient(135deg, #fa709a, #fee140); }
+        .module:nth-child(6) .module-icon { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+
+        .module-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .module-desc {
+            color: #aaa;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .module-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 5px 12px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 20px;
+            color: #00ff88;
+        }
+
+        .module-number {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+            z-index: 10;
+        }
+
+        .module:nth-child(odd) .module-number {
+            right: -45px;
+        }
+
+        .module:nth-child(even) .module-number {
+            left: -45px;
+        }
+
+        /* 职业发展路径 */
+        .career-section {
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .career-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #fee140, #fa709a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .career-paths {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .career-path {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .career-path:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(254, 225, 64, 0.3);
+        }
+
+        .career-path-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .career-path-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .career-path-desc {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        /* 时间线阶段 */
+        .phases {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 50px 0;
+            flex-wrap: wrap;
+        }
+
+        .phase {
+            text-align: center;
+            padding: 25px 35px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 200px;
+        }
+
+        .phase-period {
+            font-size: 0.85rem;
+            color: #00aaff;
+            margin-bottom: 8px;
+        }
+
+        .phase-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .phase-skills {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #00aaff;
+            text-decoration: none;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .timeline::before { left: 20px; }
+            .module { flex-direction: column !important; padding-left: 60px; }
+            .module-card { width: 100%; }
+            .module-number { left: -25px !important; right: auto !important; }
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .module-card {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .module:nth-child(1) .module-card { animation-delay: 0.1s; }
+        .module:nth-child(2) .module-card { animation-delay: 0.2s; }
+        .module:nth-child(3) .module-card { animation-delay: 0.3s; }
+        .module:nth-child(4) .module-card { animation-delay: 0.4s; }
+        .module:nth-child(5) .module-card { animation-delay: 0.5s; }
+        .module:nth-child(6) .module-card { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <div class="container">
+        <header>
+            <h1>🔧 IEST 嵌入式软件培训体系</h1>
+            <p class="subtitle">东北大学 · 智能工程系统团队 · 职业技能培训</p>
+        </header>
+
+        <!-- 统计 -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">核心模块</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">20+</div>
+                <div class="stat-label">实践示例</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">发展空间</div>
+            </div>
+        </div>
+
+        <!-- 学习阶段 -->
+        <div class="phases">
+            <div class="phase">
+                <div class="phase-period">0-6个月</div>
+                <div class="phase-title">🟢 入门阶段</div>
+                <div class="phase-skills">C语言 · 基础外设 · 开发工具</div>
+            </div>
+            <div class="phase">
+                <div class="phase-period">6-12个月</div>
+                <div class="phase-title">🔵 进阶阶段</div>
+                <div class="phase-skills">RTOS · 通信协议 · 项目实战</div>
+            </div>
+            <div class="phase">
+                <div class="phase-period">12个月+</div>
+                <div class="phase-title">🟣 高级阶段</div>
+                <div class="phase-skills">Linux · 专业方向 · 架构设计</div>
+            </div>
+        </div>
+
+        <!-- 学习路径 -->
+        <div class="timeline">
+            <div class="module">
+                <div class="module-card">
+                    <div class="module-icon">📚</div>
+                    <div class="module-title">00 预备知识</div>
+                    <div class="module-desc">掌握学习方法论和提问技巧，建立正确的学习心态和协作能力。</div>
+                    <div class="module-tags">
+                        <span class="tag">提问的智慧</span>
+                        <span class="tag">信息检索</span>
+                        <span class="tag">学习方法</span>
+                    </div>
+                </div>
+                <div class="module-number">00</div>
+            </div>
+
+            <div class="module">
+                <div class="module-card">
+                    <div class="module-icon">🔨</div>
+                    <div class="module-title">01 工具链配置</div>
+                    <div class="module-desc">了解C语言从源码到可执行文件的编译过程，配置完整的嵌入式开发环境。</div>
+                    <div class="module-tags">
+                        <span class="tag">VSCode</span>
+                        <span class="tag">GCC</span>
+                        <span class="tag">调试器</span>
+                    </div>
+                </div>
+                <div class="module-number">01</div>
+            </div>
+
+            <div class="module">
+                <div class="module-card">
+                    <div class="module-icon">💡</div>
+                    <div class="module-title">02 基础程序</div>
+                    <div class="module-desc">通过20个精选示例程序，掌握GPIO、中断、定时器、UART等基础外设开发。</div>
+                    <div class="module-tags">
+                        <span class="tag">LED控制</span>
+                        <span class="tag">按键检测</span>
+                        <span class="tag">串口通信</span>
+                        <span class="tag">PWM/ADC</span>
+                    </div>
+                </div>
+                <div class="module-number">02</div>
+            </div>
+
+            <div class="module">
+                <div class="module-card">
+                    <div class="module-icon">⚙️</div>
+                    <div class="module-title">03 操作系统</div>
+                    <div class="module-desc">学习FreeRTOS实时操作系统，掌握任务管理、队列通信、信号量等核心概念。</div>
+                    <div class="module-tags">
+                        <span class="tag">FreeRTOS</span>
+                        <span class="tag">任务调度</span>
+                        <span class="tag">IPC通信</span>
+                    </div>
+                </div>
+                <div class="module-number">03</div>
+            </div>
+
+            <div class="module">
+                <div class="module-card">
+                    <div class="module-icon">🚀</div>
+                    <div class="module-title">04 职业发展</div>
+                    <div class="module-desc">了解嵌入式开发行业趋势，明确职业发展方向，制定个人成长路线图。</div>
+                    <div class="module-tags">
+                        <span class="tag">技能路线</span>
+                        <span class="tag">职业方向</span>
+                        <span class="tag">面试指导</span>
+                    </div>
+                </div>
+                <div class="module-number">04</div>
+            </div>
+
+            <div class="module">
+                <div class="module-card">
+                    <div class="module-icon">📖</div>
+                    <div class="module-title">05 学习资源</div>
+                    <div class="module-desc">精选优质书籍、视频、工具推荐，构建持续学习的资源体系。</div>
+                    <div class="module-tags">
+                        <span class="tag">推荐书籍</span>
+                        <span class="tag">视频教程</span>
+                        <span class="tag">开源项目</span>
+                    </div>
+                </div>
+                <div class="module-number">05</div>
+            </div>
+        </div>
+
+        <!-- 职业发展路径 -->
+        <div class="career-section">
+            <h2 class="career-title">🌟 职业发展方向</h2>
+            <div class="career-paths">
+                <div class="career-path">
+                    <div class="career-path-icon">🚗</div>
+                    <div class="career-path-title">汽车电子</div>
+                    <div class="career-path-desc">ECU开发 · Autosar · CAN/LIN</div>
+                </div>
+                <div class="career-path">
+                    <div class="career-path-icon">🏠</div>
+                    <div class="career-path-title">物联网/AIoT</div>
+                    <div class="career-path-desc">智能家居 · 边缘计算 · Matter</div>
+                </div>
+                <div class="career-path">
+                    <div class="career-path-icon">🏭</div>
+                    <div class="career-path-title">工业控制</div>
+                    <div class="career-path-desc">PLC · 运动控制 · 工业通信</div>
+                </div>
+                <div class="career-path">
+                    <div class="career-path-icon">📱</div>
+                    <div class="career-path-title">消费电子</div>
+                    <div class="career-path-desc">智能硬件 · 可穿戴 · 音频视频</div>
+                </div>
+                <div class="career-path">
+                    <div class="career-path-icon">🔬</div>
+                    <div class="career-path-title">芯片/半导体</div>
+                    <div class="career-path-desc">芯片验证 · SDK开发 · 固件</div>
+                </div>
+                <div class="career-path">
+                    <div class="career-path-icon">🛰️</div>
+                    <div class="career-path-title">通信/网络</div>
+                    <div class="career-path-desc">5G/6G · 路由器 · 基站</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>📦 项目已推送至 <a href="https://github.com/Liber1917/Embedded_training_IEST" target="_blank">GitHub</a></p>
+            <p>💡 持续更新中，欢迎贡献！</p>
+        </footer>
+    </div>
+</body>
+</html>
