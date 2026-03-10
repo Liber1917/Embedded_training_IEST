@@ -108,25 +108,16 @@
 arm-none-eabi-gcc --version
 ```
 
-#### 3. 安装调试工具
-
-**J-Link** (推荐):
-```bash
-# 下载: https://www.segger.com/downloads/j-link/
-# 安装后包含 J-Link GDB Server
-```
-
-**ST-Link**:
-```bash
-# 安装驱动: ST-Link V2 USB驱动
-# 工具: ST-LINK CLI 或 OpenOCD
-```
+> ⚠️ **注意**: 如果提示找不到命令，需要将 GCC 安装目录添加到系统 PATH 环境变量
+> - 找到 `C:\Program Files\Arm GNU Toolchain\<版本>\bin` 添加到 PATH
+> - 或者使用完整的绝对路径调用
 
 #### 4. OpenOCD安装(可选)
 
 ```bash
-# 下载: https://gnutoolchains.com/arm-eabi/
-# 或使用预编译版本
+# 下载地址: https://openocd.org/pages/getting_openocd.html
+# Windows 版本: https://github.com/xpack-dev-tools/openocd-xpack/releases
+# 或使用预编译版本: https://github.com/xpack-dev-tools/openocd-xpack/releases/latest
 ```
 
 ---
@@ -291,6 +282,17 @@ HAL_Delay(500);  // 500ms延迟
 □ SWDIO/SWCLK接线正确
 □ 目标板供电正常
 □ NRST引脚状态
+□ 确认使用的是正确的调试接口(SWD vs JTAG)
+```
+
+**问题3: arm-none-eabi-gcc 找不到**
+
+```markdown
+解决方案:
+□ 确认已安装 GNU Arm Embedded Toolchain
+□ 确认已将 bin 目录添加到系统 PATH
+□ 重启终端/VSCode 使环境变量生效
+□ 在 VSCode 设置中指定 toolchain 路径
 ```
 
 ---
@@ -311,6 +313,7 @@ HAL_Delay(500);  // 500ms延迟
 
 ### 工具下载
 
-- [ARM GCC Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)
-- [OpenOCD](https://openocd.org/)
+- [ARM GCC Toolchain](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
+- [OpenOCD xPack](https://github.com/xpack-dev-tools/openocd-xpack/releases/)
 - [ST-LINK Utility](https://www.st.com/en/development-tools/stsw-link004.html)
+- [J-Link 软件下载](https://www.segger.com/downloads/j-link/)

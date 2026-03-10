@@ -1,1 +1,8 @@
 .qwen/
+node_modules/
+*.bat
+package.json
+package-lock.json
+.env
+*.js
+!*.mjs
